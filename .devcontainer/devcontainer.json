@@ -22,5 +22,6 @@
       ]
     }
   },
+  "initializeCommand": "mkdir -p ${HOME}/.claude",
   "remoteUser": "node"
 }

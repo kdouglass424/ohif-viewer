@@ -10,5 +10,8 @@ USER root
 ENV BUN_INSTALL=/home/node/.bun
 ENV PATH=${BUN_INSTALL}/bin:${PATH}
 
+# Pre-create .claude directory with correct ownership
+RUN mkdir -p /home/node/.claude && chown node:node /home/node/.claude
+
 # Verify versions
 RUN node --version && yarn --version

@@ -5,6 +5,7 @@ services:
       dockerfile: .devcontainer/Dockerfile
     volumes:
       - ..:/workspaces/ohif-viewer:cached
+      - ${HOME}/.claude:/home/node/.claude:cached
     environment:
       - APP_CONFIG=config/local_orthanc.js
     ports:
