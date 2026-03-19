@@ -9,5 +9,16 @@
   "DicomWeb": {
     "Enable": true,
     "Root": "/dicom-web/"
+  },
+
+  "PostgreSQL": {
+    "EnableIndex": true,
+    "EnableStorage": false,
+    "Host": "postgres",
+    "Port": 5432,
+    "Database": "orthanc",
+    "Username": "postgres",
+    "Password": "postgres",
+    "EnableSsl": false
   }
 }
