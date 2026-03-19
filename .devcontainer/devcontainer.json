@@ -1,0 +1,26 @@
+{
+  "name": "OHIF Viewers",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/ohif-viewer",
+
+  "containerEnv": {
+    "COREPACK_ENABLE_DOWNLOAD_PROMPT": "0"
+  },
+
+  "forwardPorts": [
+    "3000"
+  ],
+  "portsAttributes": {
+    "3000": { "label": "OHIF Viewer" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Anthropic.claude-code"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}
