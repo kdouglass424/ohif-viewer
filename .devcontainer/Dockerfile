@@ -13,5 +13,14 @@ ENV PATH=${BUN_INSTALL}/bin:${PATH}
 # Pre-create .claude directory with correct ownership
 RUN mkdir -p /home/node/.claude && chown node:node /home/node/.claude
 
+# Install Homebrew for Linux (must not run as root)
+USER node
+RUN NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+ENV PATH=/home/linuxbrew/.linuxbrew/bin:${PATH}
+
+# Install beads CLI via brew
+RUN brew install beads
+USER root
+
 # Verify versions
-RUN node --version && yarn --version
+RUN node --version && yarn --version && bd --version
