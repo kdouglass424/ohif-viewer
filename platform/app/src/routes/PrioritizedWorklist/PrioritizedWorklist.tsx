@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface WorklistItem {
   id: string;
@@ -34,6 +35,7 @@ function formatTime(iso: string): string {
 }
 
 export default function PrioritizedWorklist(): React.ReactElement {
+  const navigate = useNavigate();
   const [worklist, setWorklist] = useState<WorklistItem[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -61,6 +63,27 @@ export default function PrioritizedWorklist(): React.ReactElement {
     const interval = setInterval(fetchWorklist, 30_000);
     return () => clearInterval(interval);
   }, [fetchWorklist]);
+
+  const handleViewStudy = useCallback(
+    async (item: WorklistItem) => {
+      if (!item.studyInstanceUid) {
+        return;
+      }
+      if (item.status === 'pending') {
+        try {
+          await fetch(`/api/accessions/${item.id}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'in_progress' }),
+          });
+        } catch {
+          // Navigate even if status update fails
+        }
+      }
+      navigate(`/viewer/orthanc?StudyInstanceUIDs=${item.studyInstanceUid}`);
+    },
+    [navigate]
+  );
 
   return (
     <div className="flex h-full flex-col bg-black text-white">
@@ -106,6 +129,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
                 <th className="px-3 py-3">Client</th>
                 <th className="px-3 py-3">Submitted</th>
                 <th className="px-3 py-3">Status</th>
+                <th className="px-3 py-3">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -126,6 +150,18 @@ export default function PrioritizedWorklist(): React.ReactElement {
                     >
                       {STATUS_LABELS[item.status] ?? item.status}
                     </span>
+                  </td>
+                  <td className="px-3 py-3">
+                    {item.studyInstanceUid ? (
+                      <button
+                        onClick={() => handleViewStudy(item)}
+                        className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500"
+                      >
+                        View Study
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-600">No study</span>
+                    )}
                   </td>
                 </tr>
               ))}
