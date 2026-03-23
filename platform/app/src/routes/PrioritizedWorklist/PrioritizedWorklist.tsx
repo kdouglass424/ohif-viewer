@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface WorklistItem {
   id: string;
@@ -126,6 +126,13 @@ export default function PrioritizedWorklist(): React.ReactElement {
 
   return (
     <div className="flex h-full flex-col bg-black text-white">
+      <nav className="flex items-center gap-4 border-b border-gray-800 bg-gray-950 px-6 py-2 text-sm">
+        <Link to="/" className="text-gray-400 hover:text-white">
+          Study List
+        </Link>
+        <span className="text-gray-600">/</span>
+        <span className="text-white">Worklist</span>
+      </nav>
       <div className="flex items-center justify-between border-b border-gray-800 px-6 py-4">
         <div>
           <h1 className="text-2xl font-semibold">Prioritized Worklist</h1>
