@@ -79,6 +79,7 @@ services:
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
+      - ./config/on-stored-instance.lua:/etc/orthanc/on-stored-instance.lua:ro
     ports:
       - "8042:8042"
       - "4242:4242"

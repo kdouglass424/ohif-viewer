@@ -44,4 +44,33 @@ export class AccessionService {
     accession.status = newStatus;
     return this.accessionRepo.save(accession);
   }
+
+  async findWorklist(options: {
+    status?: AccessionStatus;
+    limit?: number;
+    offset?: number;
+  }): Promise<{ data: Accession[]; total: number }> {
+    const qb = this.accessionRepo.createQueryBuilder('a');
+
+    // Default: show pending and in_progress (exclude done)
+    if (options.status) {
+      qb.where('a.status = :status', { status: options.status });
+    } else {
+      qb.where('a.status IN (:...statuses)', {
+        statuses: [AccessionStatus.PENDING, AccessionStatus.IN_PROGRESS],
+      });
+    }
+
+    qb.orderBy('a.submittedAt', 'ASC');
+
+    if (options.limit) {
+      qb.take(options.limit);
+    }
+    if (options.offset) {
+      qb.skip(options.offset);
+    }
+
+    const [data, total] = await qb.getManyAndCount();
+    return { data, total };
+  }
 }
