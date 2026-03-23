@@ -17,9 +17,10 @@ function OnStoredInstance(instanceId, tags, metadata)
   }
 
   -- POST to PACS NestJS server
+  local apiKey = os.getenv('ORTHANC_API_KEY') or 'dev-orthanc-key'
   local headers = {
     ['Content-Type'] = 'application/json',
-    ['x-api-key'] = 'dev-orthanc-key',
+    ['x-api-key'] = apiKey,
   }
 
   -- Use pcall to catch errors without blocking Orthanc
