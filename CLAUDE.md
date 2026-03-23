@@ -187,6 +187,8 @@ The devcontainer runs via Docker Compose (`.devcontainer/docker-compose.yml`):
 | nginx    | 3001 | Reverse proxy (OHIF + Orthanc)   |
 | orthanc  | 8042 | DICOM PACS (HTTP), 4242 (DICOM)  |
 | postgres | 5432 | Orthanc database                 |
+| minio    | 9000 | S3-compatible storage (API)      |
+| minio    | 9001 | MinIO web console                |
 
 Default env: `APP_CONFIG=config/local_orthanc.js`
 
