@@ -28,6 +28,7 @@ const envSchema = z.object({
   DB_USERNAME: z.string().default('postgres'),
   DB_PASSWORD: z.string().default('postgres').pipe(z.string().transform((val) => new SecretStr(val))),
   DB_NAME: z.string().default('pacs'),
+  ORTHANC_API_KEY: z.string().default('dev-orthanc-key'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;
