@@ -114,5 +114,11 @@
     "workerpool",
     "Colorbar",
     "Colorbars"
-  ]
+  ],
+  "rest-client.environmentVariables": {
+    "dev": {
+      "host": "http://localhost:3001",
+      "apiKey": "dev-orthanc-key"
+    }
+  }
 }
