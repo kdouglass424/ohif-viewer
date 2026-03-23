@@ -34,12 +34,24 @@ function formatTime(iso: string): string {
   return new Date(iso).toLocaleString();
 }
 
+type StatusFilter = 'active' | 'pending' | 'in_progress' | 'done' | 'all';
+
+const STATUS_FILTER_OPTIONS: { value: StatusFilter; label: string }[] = [
+  { value: 'active', label: 'Active (Pending + In Progress)' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'in_progress', label: 'In Progress' },
+  { value: 'done', label: 'Done' },
+  { value: 'all', label: 'All' },
+];
+
 export default function PrioritizedWorklist(): React.ReactElement {
   const navigate = useNavigate();
   const [worklist, setWorklist] = useState<WorklistItem[]>([]);
   const [total, setTotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('active');
+  const [confirmingComplete, setConfirmingComplete] = useState<string | null>(null);
 
   const fetchWorklist = useCallback(async () => {
     try {
@@ -85,24 +97,64 @@ export default function PrioritizedWorklist(): React.ReactElement {
     [navigate]
   );
 
+  const handleMarkComplete = useCallback(
+    async (item: WorklistItem) => {
+      try {
+        const res = await fetch(`/api/accessions/${item.id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'done' }),
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+        fetchWorklist();
+      } catch {
+        setError('Failed to update status');
+      } finally {
+        setConfirmingComplete(null);
+      }
+    },
+    [fetchWorklist]
+  );
+
+  const filteredWorklist = worklist.filter((item) => {
+    if (statusFilter === 'all') return true;
+    if (statusFilter === 'active') return item.status !== 'done';
+    return item.status === statusFilter;
+  });
+
   return (
     <div className="flex h-full flex-col bg-black text-white">
       <div className="flex items-center justify-between border-b border-gray-800 px-6 py-4">
         <div>
           <h1 className="text-2xl font-semibold">Prioritized Worklist</h1>
           <p className="text-sm text-gray-400">
-            {total} active {total === 1 ? 'accession' : 'accessions'}
+            {filteredWorklist.length} of {total} {total === 1 ? 'accession' : 'accessions'}
           </p>
         </div>
-        <button
-          onClick={() => {
-            setIsLoading(true);
-            fetchWorklist();
-          }}
-          className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+            className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-300"
+          >
+            {STATUS_FILTER_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => {
+              setIsLoading(true);
+              fetchWorklist();
+            }}
+            className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto px-6 py-4">
@@ -114,7 +166,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
           <div className="flex h-64 items-center justify-center text-red-400">
             Error: {error}
           </div>
-        ) : worklist.length === 0 ? (
+        ) : filteredWorklist.length === 0 ? (
           <div className="flex h-64 items-center justify-center text-gray-500">
             No pending accessions
           </div>
@@ -133,7 +185,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
               </tr>
             </thead>
             <tbody>
-              {worklist.map((item) => (
+              {filteredWorklist.map((item) => (
                 <tr
                   key={item.id}
                   className="border-b border-gray-800/50 hover:bg-gray-900/50"
@@ -152,16 +204,44 @@ export default function PrioritizedWorklist(): React.ReactElement {
                     </span>
                   </td>
                   <td className="px-3 py-3">
-                    {item.studyInstanceUid ? (
-                      <button
-                        onClick={() => handleViewStudy(item)}
-                        className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500"
-                      >
-                        View Study
-                      </button>
-                    ) : (
-                      <span className="text-xs text-gray-600">No study</span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {item.studyInstanceUid ? (
+                        <button
+                          onClick={() => handleViewStudy(item)}
+                          className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500"
+                        >
+                          View Study
+                        </button>
+                      ) : (
+                        <span className="text-xs text-gray-600">No study</span>
+                      )}
+                      {item.status === 'in_progress' && (
+                        confirmingComplete === item.id ? (
+                          <span className="flex items-center gap-1">
+                            <span className="text-xs text-gray-400">Complete?</span>
+                            <button
+                              onClick={() => handleMarkComplete(item)}
+                              className="rounded bg-green-700 px-2 py-1 text-xs font-medium text-white hover:bg-green-600"
+                            >
+                              Yes
+                            </button>
+                            <button
+                              onClick={() => setConfirmingComplete(null)}
+                              className="rounded bg-gray-700 px-2 py-1 text-xs font-medium text-gray-300 hover:bg-gray-600"
+                            >
+                              No
+                            </button>
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => setConfirmingComplete(item.id)}
+                            className="rounded bg-green-800 px-3 py-1 text-xs font-medium text-green-200 hover:bg-green-700"
+                          >
+                            Mark Complete
+                          </button>
+                        )
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
