@@ -1,6 +1,14 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
-import { databaseConfig } from './database.config';
+import { DataSource } from 'typeorm';
+import { config } from '../config';
 
 export default new DataSource({
-  ...(databaseConfig as DataSourceOptions),
+  type: 'postgres',
+  host: config.DB_HOST,
+  port: config.DB_PORT,
+  username: config.DB_USERNAME,
+  password: config.DB_PASSWORD.getSecretValue(),
+  database: config.DB_NAME,
+  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  migrations: [__dirname + '/migrations/*{.ts,.js}'],
+  synchronize: false,
 });
