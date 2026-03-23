@@ -1,8 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls -la /workspaces/ohif-viewer/*.lock*)",
-      "Bash(find /workspaces/ohif-viewer/extensions -name \"package.json\" -exec basename {})",
       "WebFetch(domain:docs.ohif.org)"
     ]
   }
