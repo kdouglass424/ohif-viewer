@@ -20,5 +20,15 @@
     "Username": "postgres",
     "Password": "postgres",
     "EnableSsl": false
+  },
+
+  "AwsS3Storage": {
+    "BucketName": "dicom-storage",
+    "Region": "us-east-1",
+    "Endpoint": "http://minio:9000",
+    "AccessKey": "minioadmin",
+    "SecretKey": "minioadmin",
+    "VirtualAddressing": false,
+    "EnableLegacyStorageStructure": false
   }
 }
