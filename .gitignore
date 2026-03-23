@@ -1,5 +1,6 @@
 # Packages
 node_modules
+.beads/
 .cursor/
 .nyc_output/
 # Output
@@ -75,3 +76,6 @@ unlink-cs3d.js
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+
+# Beads / Dolt files (added by bd init)
+.beads-credential-key

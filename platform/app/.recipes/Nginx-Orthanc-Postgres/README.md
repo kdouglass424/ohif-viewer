@@ -1,0 +1,52 @@
+# Nginx + Orthanc + Postgres (Development)
+
+A lightweight Docker Compose stack that provides a local Orthanc PACS server backed by PostgreSQL, fronted by an Nginx reverse proxy. Designed for **host-based development** — you run `yarn dev` on your machine and access the viewer through the Nginx proxy to avoid CORS issues with Orthanc's DICOMweb API.
+
+## Services
+
+| Service  | Port | Purpose                            |
+|----------|------|------------------------------------|
+| nginx    | 3001 | Reverse proxy (OHIF + Orthanc)     |
+| orthanc  | 8042 | DICOM PACS (HTTP), 4242 (DICOM)    |
+| postgres | 5432 | Orthanc index database             |
+
+## Prerequisites
+
+- Docker and Docker Compose installed
+- Node.js and Yarn (for running OHIF locally)
+
+## Quick Start
+
+Start the backend stack:
+
+```bash
+make pacs/up
+```
+
+## Uploading DICOM Images
+
+Navigate to `http://localhost:8042` to access the Orthanc UI directly. Click **Upload** in the sidebar to drag-and-drop DICOM files.
+
+You can also upload via the nginx proxy at `http://localhost:3001/pacs/`.
+
+## Stopping
+
+```bash
+make pacs/down
+```
+
+To also remove persisted data (Postgres database and Orthanc storage):
+
+```bash
+make pacs/down-v
+```
+
+## Configuration
+
+- [config/nginx.conf](config/nginx.conf) — Nginx reverse proxy rules
+- [config/orthanc.json](config/orthanc.json) — Orthanc server settings
+- [config/init-pacs-db.sh](config/init-pacs-db.sh) — Postgres initialization script
+
+The OHIF app config used is `platform/app/public/config/local_orthanc.js`.
+
+See [the deployment docs](../../../docs/docs/deployment/nginx--image-archive.md) for more information about OHIF deployment recipes.

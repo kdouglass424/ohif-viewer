@@ -1,7 +1,0 @@
-{
-  "database": "dolt",
-  "backend": "dolt",
-  "dolt_mode": "server",
-  "dolt_database": "ohif_viewer",
-  "project_id": "5ea5c076-73ab-467f-915a-8d0d994adad2"
-}

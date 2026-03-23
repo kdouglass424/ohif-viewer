@@ -9,10 +9,12 @@
   },
 
   "forwardPorts": [
-    3000
+    3000,
+    3002
   ],
   "portsAttributes": {
-    "3000": { "label": "OHIF Viewer" }
+    "3000": { "label": "OHIF Viewer" },
+    "3002": { "label": "OHIF API Server" }
   },
 
   "customizations": {

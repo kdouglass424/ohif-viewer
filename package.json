@@ -11,7 +11,8 @@
       "platform/i18n",
       "extensions/*",
       "modes/*",
-      "addOns/externals/*"
+      "addOns/externals/*",
+      "server"
     ],
     "nohoist": [
       "**/html-minifier-terser"
@@ -40,6 +41,8 @@
     "dev": "lerna run dev:viewer --stream",
     "dev:no:cache": "lerna run dev:no:cache --stream",
     "dev:project": ".scripts/dev.sh",
+    "dev:server": "cd server && yarn dev",
+    "build:server": "cd server && yarn build",
     "dev:orthanc": "lerna run dev:orthanc --stream",
     "dev:orthanc:no:cache": "lerna run dev:orthanc:no:cache --stream",
     "dev:dcm4chee": "lerna run dev:dcm4chee --stream",

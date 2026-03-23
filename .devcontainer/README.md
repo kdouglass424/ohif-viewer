@@ -44,3 +44,7 @@ Your IDE may auto-open `http://localhost:3000`, but for this dev setup you shoul
 Navigate to `http://localhost:8042` and click the **Upload** button in the side navigation bar.
 
 Simply drag and drop DICOM files into the **Upload** box or select a directory for upload.
+
+### Troubleshooting
+
+- **"Bad Gateway" from nginx**: If you see a 502 Bad Gateway error, try restarting the nginx container in Docker Desktop.
