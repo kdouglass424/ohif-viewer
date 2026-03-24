@@ -1,6 +1,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Subject } from 'rxjs';
 import { Accession, AccessionStatus } from './accession.entity';
 import { CreateAccessionDto } from './dto/create-accession.dto';
 
@@ -12,6 +13,8 @@ const VALID_TRANSITIONS: Record<AccessionStatus, AccessionStatus[]> = {
 
 @Injectable()
 export class AccessionService {
+  readonly worklistChanged$ = new Subject<void>();
+
   constructor(
     @InjectRepository(Accession)
     private readonly accessionRepo: Repository<Accession>,
@@ -22,7 +25,9 @@ export class AccessionService {
       ...dto,
       submittedAt: new Date(),
     });
-    return this.accessionRepo.save(accession);
+    const saved = await this.accessionRepo.save(accession);
+    this.worklistChanged$.next();
+    return saved;
   }
 
   async findOne(id: string): Promise<Accession> {
@@ -42,7 +47,9 @@ export class AccessionService {
       );
     }
     accession.status = newStatus;
-    return this.accessionRepo.save(accession);
+    const saved = await this.accessionRepo.save(accession);
+    this.worklistChanged$.next();
+    return saved;
   }
 
   async findWorklist(options: {

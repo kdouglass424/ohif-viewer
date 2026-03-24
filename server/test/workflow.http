@@ -64,3 +64,7 @@ Content-Type: application/json
 
 ### 9. Verify worklist (accession should no longer appear)
 GET {{host}}/api/worklist
+
+### 10. Subscribe to worklist SSE events (streams updates in real-time)
+GET {{host}}/api/worklist/events
+Accept: text/event-stream

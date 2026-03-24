@@ -1,4 +1,5 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Query, Sse, MessageEvent } from '@nestjs/common';
+import { Observable, map } from 'rxjs';
 import { AccessionService } from './accession.service';
 import { AccessionStatus } from './accession.entity';
 
@@ -17,5 +18,12 @@ export class WorklistController {
       limit: limit ? parseInt(limit, 10) : undefined,
       offset: offset ? parseInt(offset, 10) : undefined,
     });
+  }
+
+  @Sse('events')
+  events(): Observable<MessageEvent> {
+    return this.accessionService.worklistChanged$.pipe(
+      map(() => ({ data: { changed: true } })),
+    );
   }
 }

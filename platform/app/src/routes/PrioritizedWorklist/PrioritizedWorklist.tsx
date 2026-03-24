@@ -101,8 +101,15 @@ export default function PrioritizedWorklist(): React.ReactElement {
 
   useEffect(() => {
     fetchWorklist();
-    const interval = setInterval(fetchWorklist, 30_000);
-    return () => clearInterval(interval);
+
+    const eventSource = new EventSource('/api/worklist/events');
+    eventSource.onmessage = () => fetchWorklist();
+    eventSource.onerror = () => {
+      // Connection lost — reconnect is automatic via EventSource,
+      // but refetch on recovery to stay current
+      eventSource.onopen = () => fetchWorklist();
+    };
+    return () => eventSource.close();
   }, [fetchWorklist]);
 
   const handleViewStudy = useCallback(
@@ -144,14 +151,14 @@ export default function PrioritizedWorklist(): React.ReactElement {
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
         }
-        fetchWorklist();
+        // SSE event will trigger refetch automatically
       } catch {
         setError('Failed to update status');
       } finally {
         setConfirmingComplete(null);
       }
     },
-    [fetchWorklist]
+    []
   );
 
   const filteredWorklist = worklist.filter((item) => {
