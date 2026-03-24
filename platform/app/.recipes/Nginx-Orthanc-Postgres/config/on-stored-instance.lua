@@ -1,3 +1,7 @@
+-- DEPRECATED: This Lua hook has been replaced by on-stored-instance.py
+-- which publishes to a Redis queue (BullMQ) instead of making a direct
+-- HTTP POST to the PACS API. This file is kept for reference only.
+
 function OnStoredInstance(instanceId, tags, metadata)
   -- Extract DICOM tags from the instance
   local instance = RestApiGet('/instances/' .. instanceId)

@@ -66,21 +66,38 @@ services:
       echo 'Bucket dicom-storage ready';
       "
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   orthanc:
-    image: orthancteam/orthanc:latest
+    build:
+      context: ./config
+      dockerfile: Dockerfile.orthanc
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
       minio-init:
         condition: service_completed_successfully
+      redis:
+        condition: service_healthy
     environment:
-      ORTHANC_API_KEY: "dev-orthanc-key"
-      ORTHANC_INSTANCES_URL: "http://host.docker.internal:3002/api/orthanc/instances"
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro
-      - ./config/on-stored-instance.lua:/etc/orthanc/on-stored-instance.lua:ro
+      - ./config/on-stored-instance.py:/etc/orthanc/on-stored-instance.py:ro
     ports:
       - "8042:8042"
       - "4242:4242"
@@ -89,3 +106,4 @@ volumes:
   postgres-data:
   orthanc-storage:
   minio-data:
+  redis-data:

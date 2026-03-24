@@ -29,6 +29,9 @@ const envSchema = z.object({
   DB_PASSWORD: z.string().default('postgres').pipe(z.string().transform((val) => new SecretStr(val))),
   DB_NAME: z.string().default('pacs'),
   ORTHANC_API_KEY: z.string().default('dev-orthanc-key'),
+  REDIS_HOST: z.string().default('localhost'),
+  REDIS_PORT: z.coerce.number().default(6379),
+  ORTHANC_INTERNAL_URL: z.string().default('http://localhost:8042'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

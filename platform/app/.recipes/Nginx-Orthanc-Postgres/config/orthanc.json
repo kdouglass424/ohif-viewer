@@ -32,7 +32,5 @@
     "EnableLegacyStorageStructure": false
   },
 
-  "LuaScripts": [
-    "/etc/orthanc/on-stored-instance.lua"
-  ]
+  "PythonScript": "/etc/orthanc/on-stored-instance.py"
 }
