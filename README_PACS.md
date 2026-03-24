@@ -18,16 +18,16 @@
 2. Start the PACS backend stack in the background (nginx, Orthanc, Postgres, MinIO):
 
    ```sh
-   make pacs/up-d
+   make docker/up-d
    ```
 
    Note: to stop the docker compose stack, use:
 
    ```sh
    # tear down but keep volumes
-   make pacs/down
+   make docker/down
    # tear down and remove volumes
-   make pacs/down-v
+   make docker/down-v
    ```
 
 3. Run the database migrations:

@@ -23,7 +23,7 @@ A lightweight Docker Compose stack that provides a local Orthanc PACS server bac
 Start the backend stack:
 
 ```bash
-make pacs/up
+make docker/up
 ```
 
 ## Uploading DICOM Images
@@ -35,13 +35,13 @@ You can also upload via the nginx proxy at `http://localhost:3001/pacs/`.
 ## Stopping
 
 ```bash
-make pacs/down
+make docker/down
 ```
 
 To also remove persisted data (Postgres database and Orthanc storage):
 
 ```bash
-make pacs/down-v
+make docker/down-v
 ```
 
 ## MinIO (S3 Storage)

@@ -42,23 +42,23 @@ run/server:
 RECIPE_DIR := platform/app/.recipes/Nginx-Orthanc-Postgres
 
 ## Start PACS stack (Orthanc + Nginx + Postgres)
-.PHONY: pacs/up
-pacs/up:
+.PHONY: docker/up
+docker/up:
 	docker compose -f $(RECIPE_DIR)/docker-compose.yml up
 
 ## Start PACS stack in detached mode
-.PHONY: pacs/up-d
-pacs/up-d:
+.PHONY: docker/up-d
+docker/up-d:
 	docker compose -f $(RECIPE_DIR)/docker-compose.yml up -d
 
 ## Stop PACS stack
-.PHONY: pacs/down
-pacs/down:
+.PHONY: docker/down
+docker/down:
 	docker compose -f $(RECIPE_DIR)/docker-compose.yml down
 
 ## Stop PACS stack and remove volumes
-.PHONY: pacs/down-v
-pacs/down-v:
+.PHONY: docker/down-v
+docker/down-v:
 	docker compose -f $(RECIPE_DIR)/docker-compose.yml down -v
 
 ## Follow PACS stack logs
