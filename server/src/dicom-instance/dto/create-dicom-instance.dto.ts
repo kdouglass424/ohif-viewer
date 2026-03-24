@@ -10,6 +10,7 @@ export const CreateDicomInstanceSchema = z.object({
   modality: z.string().optional(),
   patientId: z.string().optional(),
   patientName: z.string().optional(),
+  accessionNumber: z.string().optional(),
 });
 
 export type CreateDicomInstanceDto = z.infer<typeof CreateDicomInstanceSchema>;

@@ -4,16 +4,26 @@ function OnStoredInstance(instanceId, tags, metadata)
   local parsed = ParseJson(instance)
   local mainTags = parsed['MainDicomTags'] or {}
 
+  -- AccessionNumber is a study-level tag; fetch from parent study
+  local parentStudyId = parsed['ParentStudy']
+  local accessionNumber = nil
+  if parentStudyId then
+    local study = ParseJson(RestApiGet('/studies/' .. parentStudyId))
+    local studyTags = study['MainDicomTags'] or {}
+    accessionNumber = studyTags['AccessionNumber']
+  end
+
   -- Build payload for the PACS server
   local payload = {
     orthancId = instanceId,
     sopInstanceUid = mainTags['SOPInstanceUID'],
     seriesInstanceUid = mainTags['SeriesInstanceUID'] or parsed['ParentSeries'],
-    studyInstanceUid = mainTags['StudyInstanceUID'] or parsed['ParentStudy'],
+    studyInstanceUid = mainTags['StudyInstanceUID'] or parentStudyId,
     sopClassUid = mainTags['SOPClassUID'],
     modality = mainTags['Modality'],
     patientId = mainTags['PatientID'],
     patientName = mainTags['PatientName'],
+    accessionNumber = accessionNumber,
   }
 
   -- POST to PACS NestJS server

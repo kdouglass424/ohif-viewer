@@ -32,6 +32,9 @@ export class DicomInstance {
   @Column({ nullable: true })
   patientName: string;
 
+  @Column({ nullable: true })
+  accessionNumber: string;
+
   @CreateDateColumn({ type: 'timestamptz' })
   receivedAt: Date;
 }
