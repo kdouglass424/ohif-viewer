@@ -27,8 +27,17 @@ function OnStoredInstance(instanceId, tags, metadata)
   }
 
   -- POST to PACS NestJS server
-  local instancesUrl = os.getenv('ORTHANC_INSTANCES_URL') or 'http://host.docker.internal:3002/api/orthanc/instances'
-  local apiKey = os.getenv('ORTHANC_API_KEY') or 'dev-orthanc-key'
+  local instancesUrl = os.getenv('ORTHANC_INSTANCES_URL')
+  if not instancesUrl then
+    PrintToStdout('OnStoredInstance: ORTHANC_INSTANCES_URL environment variable is not set')
+    error('ORTHANC_INSTANCES_URL is not set')
+  end
+
+  local apiKey = os.getenv('ORTHANC_API_KEY')
+  if not apiKey then
+    PrintToStdout('OnStoredInstance: ORTHANC_API_KEY environment variable is not set')
+    error('ORTHANC_API_KEY is not set')
+  end
   local headers = {
     ['Content-Type'] = 'application/json',
     ['x-api-key'] = apiKey,
