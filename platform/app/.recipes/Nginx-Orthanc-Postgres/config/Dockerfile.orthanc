@@ -1,2 +1,2 @@
 FROM orthancteam/orthanc:latest
-RUN pip install --break-system-packages python-bullmq
+RUN pip install --break-system-packages bullmq
