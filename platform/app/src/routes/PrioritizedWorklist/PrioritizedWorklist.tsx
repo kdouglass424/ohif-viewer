@@ -1,5 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  cn,
+} from '@ohif/ui-next';
 
 interface WorklistItem {
   id: string;
@@ -20,7 +35,7 @@ interface WorklistResponse {
 
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-yellow-900/50 text-yellow-200',
-  in_progress: 'bg-blue-900/50 text-blue-200',
+  in_progress: 'bg-primary/20 text-primary',
   done: 'bg-green-900/50 text-green-200',
 };
 
@@ -43,6 +58,20 @@ const STATUS_FILTER_OPTIONS: { value: StatusFilter; label: string }[] = [
   { value: 'done', label: 'Done' },
   { value: 'all', label: 'All' },
 ];
+
+function StatusBadge({ status }: { status: string }) {
+  return (
+    <span
+      data-cy="worklist-status-badge"
+      className={cn(
+        'inline-block rounded-full px-2 py-0.5 text-xs font-medium',
+        STATUS_STYLES[status]
+      )}
+    >
+      {STATUS_LABELS[status] ?? status}
+    </span>
+  );
+}
 
 export default function PrioritizedWorklist(): React.ReactElement {
   const navigate = useNavigate();
@@ -125,135 +154,159 @@ export default function PrioritizedWorklist(): React.ReactElement {
   });
 
   return (
-    <div className="flex h-full flex-col bg-black text-white">
-      <nav className="flex items-center gap-4 border-b border-gray-800 bg-gray-950 px-6 py-2 text-sm">
-        <Link to="/" className="text-gray-400 hover:text-white">
+    <div className="bg-background text-foreground flex h-full flex-col">
+      <nav className="border-border bg-muted flex items-center gap-4 border-b px-6 py-2 text-sm">
+        <Link
+          to="/"
+          className="text-muted-foreground hover:text-foreground"
+          data-cy="worklist-nav-studylist"
+        >
           Study List
         </Link>
-        <span className="text-gray-600">/</span>
-        <span className="text-white">Worklist</span>
+        <span className="text-muted-foreground/50">/</span>
+        <span className="text-foreground">Worklist</span>
       </nav>
-      <div className="flex items-center justify-between border-b border-gray-800 px-6 py-4">
+
+      <div className="border-border flex items-center justify-between border-b px-6 py-4">
         <div>
           <h1 className="text-2xl font-semibold">Prioritized Worklist</h1>
-          <p className="text-sm text-gray-400">
+          <p className="text-muted-foreground text-sm">
             {filteredWorklist.length} of {total} {total === 1 ? 'accession' : 'accessions'}
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <select
+          <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-300"
+            onValueChange={(value) => setStatusFilter(value as StatusFilter)}
           >
-            {STATUS_FILTER_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <button
+            <SelectTrigger
+              className="w-[220px]"
+              data-cy="worklist-status-filter"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_FILTER_OPTIONS.map((opt) => (
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value}
+                >
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            variant="secondary"
+            size="default"
+            dataCY="worklist-refresh"
             onClick={() => {
               setIsLoading(true);
               fetchWorklist();
             }}
-            className="rounded bg-gray-800 px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700"
           >
             Refresh
-          </button>
+          </Button>
         </div>
       </div>
 
       <div className="flex-1 overflow-auto px-6 py-4">
         {isLoading && worklist.length === 0 ? (
-          <div className="flex h-64 items-center justify-center text-gray-500">
+          <div className="text-muted-foreground flex h-64 items-center justify-center">
             Loading worklist...
           </div>
         ) : error ? (
-          <div className="flex h-64 items-center justify-center text-red-400">
+          <div className="text-destructive flex h-64 items-center justify-center">
             Error: {error}
           </div>
         ) : filteredWorklist.length === 0 ? (
-          <div className="flex h-64 items-center justify-center text-gray-500">
+          <div className="text-muted-foreground flex h-64 items-center justify-center">
             No pending accessions
           </div>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400">
-                <th className="px-3 py-3">Accession #</th>
-                <th className="px-3 py-3">Patient</th>
-                <th className="px-3 py-3">Species</th>
-                <th className="px-3 py-3">Breed</th>
-                <th className="px-3 py-3">Client</th>
-                <th className="px-3 py-3">Submitted</th>
-                <th className="px-3 py-3">Status</th>
-                <th className="px-3 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table data-cy="worklist-table">
+            <TableHeader>
+              <TableRow className="text-xs uppercase tracking-wider">
+                <TableHead>Accession #</TableHead>
+                <TableHead>Patient</TableHead>
+                <TableHead>Species</TableHead>
+                <TableHead>Breed</TableHead>
+                <TableHead>Client</TableHead>
+                <TableHead>Submitted</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {filteredWorklist.map((item) => (
-                <tr
+                <TableRow
                   key={item.id}
-                  className="border-b border-gray-800/50 hover:bg-gray-900/50"
+                  data-cy="worklist-row"
                 >
-                  <td className="px-3 py-3 font-mono">{item.accessionNumber}</td>
-                  <td className="px-3 py-3">{item.patientName ?? '—'}</td>
-                  <td className="px-3 py-3">{item.species ?? '—'}</td>
-                  <td className="px-3 py-3">{item.breed ?? '—'}</td>
-                  <td className="px-3 py-3">{item.clientName ?? '—'}</td>
-                  <td className="px-3 py-3 text-gray-400">{formatTime(item.submittedAt)}</td>
-                  <td className="px-3 py-3">
-                    <span
-                      className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[item.status] ?? ''}`}
-                    >
-                      {STATUS_LABELS[item.status] ?? item.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3">
+                  <TableCell className="font-mono">{item.accessionNumber}</TableCell>
+                  <TableCell>{item.patientName ?? '—'}</TableCell>
+                  <TableCell>{item.species ?? '—'}</TableCell>
+                  <TableCell>{item.breed ?? '—'}</TableCell>
+                  <TableCell>{item.clientName ?? '—'}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {formatTime(item.submittedAt)}
+                  </TableCell>
+                  <TableCell>
+                    <StatusBadge status={item.status} />
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       {item.studyInstanceUid ? (
-                        <button
+                        <Button
+                          variant="default"
+                          size="sm"
+                          dataCY="worklist-view-study"
                           onClick={() => handleViewStudy(item)}
-                          className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-500"
                         >
                           View Study
-                        </button>
+                        </Button>
                       ) : (
-                        <span className="text-xs text-gray-600">No study</span>
+                        <span className="text-muted-foreground/50 text-xs">No study</span>
                       )}
-                      {item.status === 'in_progress' && (
-                        confirmingComplete === item.id ? (
+                      {item.status === 'in_progress' &&
+                        (confirmingComplete === item.id ? (
                           <span className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400">Complete?</span>
-                            <button
+                            <span className="text-muted-foreground text-xs">Complete?</span>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              dataCY="worklist-confirm-complete"
+                              className="bg-green-700 hover:bg-green-600"
                               onClick={() => handleMarkComplete(item)}
-                              className="rounded bg-green-700 px-2 py-1 text-xs font-medium text-white hover:bg-green-600"
                             >
                               Yes
-                            </button>
-                            <button
+                            </Button>
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              dataCY="worklist-cancel-complete"
                               onClick={() => setConfirmingComplete(null)}
-                              className="rounded bg-gray-700 px-2 py-1 text-xs font-medium text-gray-300 hover:bg-gray-600"
                             >
                               No
-                            </button>
+                            </Button>
                           </span>
                         ) : (
-                          <button
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            dataCY="worklist-mark-complete"
+                            className="border-green-700/50 text-green-200 hover:bg-green-900/50"
                             onClick={() => setConfirmingComplete(item.id)}
-                            className="rounded bg-green-800 px-3 py-1 text-xs font-medium text-green-200 hover:bg-green-700"
                           >
                             Mark Complete
-                          </button>
-                        )
-                      )}
+                          </Button>
+                        ))}
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         )}
       </div>
     </div>
