@@ -75,7 +75,6 @@ services:
       minio-init:
         condition: service_completed_successfully
     environment:
-      ORTHANC__AWS_S3_STORAGE__VIRTUAL_ADDRESSING: "false"
       ORTHANC_API_KEY: "dev-orthanc-key"
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
