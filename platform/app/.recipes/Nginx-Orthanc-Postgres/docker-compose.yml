@@ -76,6 +76,7 @@ services:
         condition: service_completed_successfully
     environment:
       ORTHANC_API_KEY: "dev-orthanc-key"
+      ORTHANC_INSTANCES_URL: "http://host.docker.internal:3002/api/orthanc/instances"
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./config/orthanc.json:/etc/orthanc/orthanc.json:ro

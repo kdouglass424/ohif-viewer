@@ -17,6 +17,7 @@ function OnStoredInstance(instanceId, tags, metadata)
   }
 
   -- POST to PACS NestJS server
+  local instancesUrl = os.getenv('ORTHANC_INSTANCES_URL') or 'http://host.docker.internal:3002/api/orthanc/instances'
   local apiKey = os.getenv('ORTHANC_API_KEY') or 'dev-orthanc-key'
   local headers = {
     ['Content-Type'] = 'application/json',
@@ -25,7 +26,7 @@ function OnStoredInstance(instanceId, tags, metadata)
 
   -- Use pcall to catch errors without blocking Orthanc
   local success, err = pcall(function()
-    HttpPost('http://host.docker.internal:3002/api/orthanc/instances',
+    HttpPost(instancesUrl,
              DumpJson(payload),
              headers)
   end)
