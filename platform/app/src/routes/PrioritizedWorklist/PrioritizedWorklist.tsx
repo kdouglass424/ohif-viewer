@@ -107,7 +107,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
 
   const handleViewStudy = useCallback(
     async (item: WorklistItem) => {
-      if (!item.studyInstanceUid) {
+      if (!item.studyInstanceUid && !item.accessionNumber) {
         return;
       }
       if (item.status === 'pending') {
@@ -121,7 +121,14 @@ export default function PrioritizedWorklist(): React.ReactElement {
           // Navigate even if status update fails
         }
       }
-      navigate(`/viewer/orthanc?StudyInstanceUIDs=${item.studyInstanceUid}`);
+      const queryParams = new URLSearchParams();
+      if (item.accessionNumber) {
+        queryParams.set('AccessionNumber', item.accessionNumber);
+      }
+      if (item.studyInstanceUid) {
+        queryParams.set('StudyInstanceUIDs', item.studyInstanceUid);
+      }
+      navigate(`/viewer/orthanc?${queryParams.toString()}`);
     },
     [navigate]
   );
@@ -256,7 +263,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      {item.studyInstanceUid ? (
+                      {item.studyInstanceUid || item.accessionNumber ? (
                         <Button
                           variant="default"
                           size="sm"

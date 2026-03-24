@@ -124,7 +124,23 @@ export default function ModeRoute({
         params,
         query,
       });
-      setStudyInstanceUIDs(dataSource.getStudyInstanceUIDs({ params, query }));
+
+      let uids = dataSource.getStudyInstanceUIDs({ params, query });
+
+      // If no StudyInstanceUIDs but AccessionNumber is provided, resolve via QIDO-RS
+      const accessionNumber = query.get('AccessionNumber') || query.get('accessionNumber');
+      if (accessionNumber && (!uids || !uids[0] || uids[0] === 'undefined')) {
+        try {
+          const results = await dataSource.query.studies.search({ accessionNumber });
+          if (results?.length) {
+            uids = results.map(r => r.studyInstanceUid).filter(Boolean);
+          }
+        } catch (error) {
+          console.error('Failed to resolve AccessionNumber to StudyInstanceUID:', error);
+        }
+      }
+
+      setStudyInstanceUIDs(uids);
     };
 
     initializeDataSource(params, query);
