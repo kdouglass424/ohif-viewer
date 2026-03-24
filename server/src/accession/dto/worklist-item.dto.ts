@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 import { AccessionStatus } from './update-accession-status.dto';
 
@@ -13,4 +14,4 @@ export const WorklistItemSchema = z.object({
   clientName: z.string().nullable(),
 });
 
-export type WorklistItemDto = z.infer<typeof WorklistItemSchema>;
+export class WorklistItemDto extends createZodDto(WorklistItemSchema) {}

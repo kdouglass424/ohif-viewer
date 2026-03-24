@@ -1,16 +1,14 @@
-import { Controller, Post, Get, Patch, Param, Body, UsePipes, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Post, Get, Patch, Param, Body, ParseUUIDPipe } from '@nestjs/common';
 import { AccessionService } from './accession.service';
 import { AccessionStatus } from './accession.entity';
-import { CreateAccessionSchema, CreateAccessionDto } from './dto/create-accession.dto';
-import { UpdateAccessionStatusSchema, UpdateAccessionStatusDto } from './dto/update-accession-status.dto';
-import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
+import { CreateAccessionDto } from './dto/create-accession.dto';
+import { UpdateAccessionStatusDto } from './dto/update-accession-status.dto';
 
 @Controller('accessions')
 export class AccessionController {
   constructor(private readonly accessionService: AccessionService) {}
 
   @Post()
-  @UsePipes(new ZodValidationPipe(CreateAccessionSchema))
   create(@Body() dto: CreateAccessionDto) {
     return this.accessionService.create(dto);
   }
@@ -21,7 +19,6 @@ export class AccessionController {
   }
 
   @Patch(':id/status')
-  @UsePipes(new ZodValidationPipe(UpdateAccessionStatusSchema))
   updateStatus(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAccessionStatusDto,

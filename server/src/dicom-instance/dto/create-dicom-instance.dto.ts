@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const CreateDicomInstanceSchema = z.object({
@@ -13,4 +14,4 @@ export const CreateDicomInstanceSchema = z.object({
   accessionNumber: z.string().optional(),
 });
 
-export type CreateDicomInstanceDto = z.infer<typeof CreateDicomInstanceSchema>;
+export class CreateDicomInstanceDto extends createZodDto(CreateDicomInstanceSchema) {}

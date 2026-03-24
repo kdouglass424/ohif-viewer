@@ -1,3 +1,4 @@
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 export const CreateAccessionSchema = z.object({
@@ -14,4 +15,4 @@ export const CreateAccessionSchema = z.object({
   clientId: z.string().optional(),
 });
 
-export type CreateAccessionDto = z.infer<typeof CreateAccessionSchema>;
+export class CreateAccessionDto extends createZodDto(CreateAccessionSchema) {}
