@@ -6,7 +6,7 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main",
-    "typeorm": "npx typeorm-ts-node-commonjs -d src/database/data-source.ts",
+    "typeorm": "npx typeorm-ts-node-commonjs -d database/data-source.ts",
     "migration:generate": "yarn typeorm migration:generate",
     "migration:run": "yarn typeorm migration:run",
     "migration:revert": "yarn typeorm migration:revert"
