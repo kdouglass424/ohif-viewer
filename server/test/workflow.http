@@ -12,6 +12,7 @@ x-api-key: {{apiKey}}
   "sopInstanceUid": "1.2.840.113619.2.55.3.604688.1234",
   "seriesInstanceUid": "1.2.840.113619.2.55.3.604688.5678",
   "studyInstanceUid": "1.2.840.113619.2.55.3.604688.9999",
+  "accessionNumber": "ACC-2026-0001",
   "sopClassUid": "1.2.840.10008.5.1.4.1.1.2",
   "modality": "CR",
   "patientId": "PET-001",
