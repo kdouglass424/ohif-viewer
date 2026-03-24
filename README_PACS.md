@@ -15,25 +15,42 @@
    make yarn/init
    ```
 
-2. Start the PACS backend stack in the background (nginx, Orthanc, Postgres):
+2. Start the PACS backend stack in the background (nginx, Orthanc, Postgres, MinIO):
 
    ```sh
    make pacs/up-d
    ```
 
-   To stop the docker compose stack, use:
+   Note: to stop the docker compose stack, use:
 
    ```sh
+   # tear down but keep volumes
    make pacs/down
+   # tear down and remove volumes
+   make pacs/down-v
    ```
 
-3. In a separate terminal, start the OHIF dev server:
+3. Run the database migrations:
+
+   ```sh
+   make db/migrate
+   ```
+
+4. Start the PACS API server:
+
+   ```sh
+   make run/server
+   ```
+
+5. In a separate terminal, start the OHIF web application:
 
    ```sh
    make run/dev
    ```
 
-4. Open `http://localhost:3001` in your browser.
+6. Open `http://localhost:3001/worklist` in your browser.
+
+7. Utilize the [workflow.http](./server/test/workflow.http) along with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) to send sample payloads to the PACS API server.
 
 ## Uploading DICOM images
 

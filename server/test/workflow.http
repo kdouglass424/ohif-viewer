@@ -2,6 +2,7 @@
 GET {{host}}/api/status
 
 ### 2. Simulate Orthanc webhook - store a DICOM instance
+###    Note: this will happen automatically if you upload an image via Orthanc's web ui
 POST {{host}}/api/orthanc/instances
 Content-Type: application/json
 x-api-key: {{apiKey}}
@@ -23,7 +24,7 @@ Content-Type: application/json
 
 {
   "accessionNumber": "ACC-2026-0001",
-  "studyInstanceUid": "1.2.840.113619.2.55.3.604688.9999",
+  "studyInstanceUid": "1.2.276.0.7230010.3.1.2.1698247013.1.1774363746.157744",
   "patientId": "PET-001",
   "patientName": "Buddy",
   "patientSex": "M",
@@ -62,20 +63,3 @@ Content-Type: application/json
 
 ### 9. Verify worklist (accession should no longer appear)
 GET {{host}}/api/worklist
-
-### 10. Create a second accession for worklist testing
-POST {{host}}/api/accessions
-Content-Type: application/json
-
-{
-  "accessionNumber": "ACC-2026-0002",
-  "patientId": "PET-002",
-  "patientName": "Luna",
-  "patientSex": "F",
-  "patientDob": "2022-07-20",
-  "patientWeight": 4.2,
-  "species": "Feline",
-  "breed": "Siamese",
-  "clientName": "Bob Johnson",
-  "clientId": "CLIENT-088"
-}

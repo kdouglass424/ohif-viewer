@@ -32,7 +32,7 @@ yarn/init:
 ## Start OHIF dev server with local Orthanc config
 .PHONY: run/dev
 run/dev:
-	APP_CONFIG=config/local_orthanc.js OHIF_OPEN_URL=http://localhost:3001 yarn dev
+	APP_CONFIG=config/local_orthanc.js OHIF_OPEN_URL=http://localhost:3001/worklist yarn dev
 
 ## Start the backend dev server
 .PHONY: run/server
@@ -65,3 +65,8 @@ pacs/down-v:
 .PHONY: pacs/logs
 pacs/logs:
 	docker compose -f $(RECIPE_DIR)/docker-compose.yml logs -f
+
+## Run database migrations
+.PHONY: db/migrate
+db/migrate:
+	yarn --cwd server migration:run
