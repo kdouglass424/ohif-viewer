@@ -2,6 +2,8 @@
 
 A lightweight Docker Compose stack that provides a local Orthanc PACS server backed by PostgreSQL, fronted by an Nginx reverse proxy. Designed for **host-based development** — you run `yarn dev` on your machine and access the viewer through the Nginx proxy to avoid CORS issues with Orthanc's DICOMweb API.
 
+You will need the [draw.io extension](https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio) to view the architecture [diagram](./architecture.drawio).
+
 ## Services
 
 | Service    | Port | Purpose                            |
