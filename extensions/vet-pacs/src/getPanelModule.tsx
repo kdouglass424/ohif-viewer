@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { Button, Label, Separator } from '@ohif/ui-next';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { Button, Label, Separator, Textarea } from '@ohif/ui-next';
 
 interface AccessionData {
   id: string;
@@ -40,11 +40,13 @@ function InfoRow({ label, value }: { label: string; value: string | null | undef
 }
 
 function VetPatientPanel() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const accessionNumber = searchParams.get('AccessionNumber');
   const [accession, setAccession] = useState<AccessionData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reportText, setReportText] = useState('');
 
   const fetchAccession = useCallback(async (accNum: string) => {
     setIsLoading(true);
@@ -121,6 +123,16 @@ function VetPatientPanel() {
 
   return (
     <div className="flex flex-col gap-2 p-3">
+      {/* Navigation */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-muted-foreground hover:text-foreground -ml-1 mb-1 self-start"
+        onClick={() => navigate('/worklist')}
+      >
+        &larr; Back to Worklist
+      </Button>
+
       {/* Status */}
       <div className="flex items-center justify-between">
         <span className="text-sm font-medium">Accession</span>
@@ -153,6 +165,17 @@ function VetPatientPanel() {
       <span className="text-xs font-medium uppercase tracking-wider">Owner</span>
       <InfoRow label="Name" value={accession.clientName} />
       <InfoRow label="ID" value={accession.clientId} />
+
+      <Separator />
+
+      {/* Report */}
+      <span className="text-xs font-medium uppercase tracking-wider">Report</span>
+      <Textarea
+        className="min-h-[200px]"
+        placeholder="Enter reading report..."
+        value={reportText}
+        onChange={e => setReportText(e.target.value)}
+      />
 
       <Separator />
 

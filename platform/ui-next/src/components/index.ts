@@ -36,6 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './Tabs';
 import { Toggle, toggleVariants } from './Toggle';
 import { ToggleGroup, ToggleGroupItem } from './ToggleGroup';
 import { Input } from './Input';
+import { Textarea } from './Textarea';
 import { InputNumber } from './InputNumber';
 import { Label } from './Label';
 import { Switch } from './Switch';
@@ -179,6 +180,7 @@ export {
   DatePickerWithRange,
   Input,
   InputNumber,
+  Textarea,
   Label,
   Tabs,
   TabsContent,

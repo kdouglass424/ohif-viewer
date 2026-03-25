@@ -24,16 +24,16 @@ POST {{host}}/api/accessions
 Content-Type: application/json
 
 {
-  "accessionNumber": "ACC-2026-0001",
-  "studyInstanceUid": "1.2.276.0.7230010.3.1.2.1698247013.1.1774363746.157744",
-  "patientId": "PET-001",
-  "patientName": "Buddy",
+  "accessionNumber": "7-14538530360-1",
+  "studyInstanceUid": "1.2.156.112536.1.2146.116254072099197127.14538530360.1",
+  "patientId": "00743-55",
+  "patientName": "Roscoe",
   "patientSex": "M",
-  "patientDob": "2020-03-15",
+  "patientDob": "2021-06-17",
   "patientWeight": 12.5,
   "species": "Canine",
   "breed": "Golden Retriever",
-  "clientName": "Jane Smith",
+  "clientName": "Jane Valesquez",
   "clientId": "CLIENT-042"
 }
 
