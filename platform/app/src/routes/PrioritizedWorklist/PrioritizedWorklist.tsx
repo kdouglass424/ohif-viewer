@@ -135,7 +135,7 @@ export default function PrioritizedWorklist(): React.ReactElement {
       if (item.studyInstanceUid) {
         queryParams.set('StudyInstanceUIDs', item.studyInstanceUid);
       }
-      navigate(`/viewer/orthanc?${queryParams.toString()}`);
+      navigate(`/reading/orthanc?${queryParams.toString()}`);
     },
     [navigate]
   );

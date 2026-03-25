@@ -65,9 +65,15 @@
     {
       "packageName": "@ohif/extension-ultrasound-pleura-bline",
       "version": "3.0.0"
+    },
+    {
+      "packageName": "@vcr/extension-vet-pacs"
     }
   ],
   "modes": [
+    {
+      "packageName": "@vcr/mode-vet-reading"
+    },
     {
       "packageName": "@ohif/mode-longitudinal"
     },

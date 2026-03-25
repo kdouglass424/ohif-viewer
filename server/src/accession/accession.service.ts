@@ -38,6 +38,14 @@ export class AccessionService {
     return accession;
   }
 
+  async findByAccessionNumber(accessionNumber: string): Promise<Accession> {
+    const accession = await this.accessionRepo.findOneBy({ accessionNumber });
+    if (!accession) {
+      throw new NotFoundException(`Accession ${accessionNumber} not found`);
+    }
+    return accession;
+  }
+
   async updateStatus(id: string, newStatus: AccessionStatus): Promise<Accession> {
     const accession = await this.findOne(id);
     const allowed = VALID_TRANSITIONS[accession.status];

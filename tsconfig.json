@@ -27,6 +27,10 @@
       "@ohif/mode-ultrasound-pleura-bline": ["./modes/usAnnotation/src"],
       "@ohif/extension-cornerstone": ["./extensions/cornerstone/src"],
       "@ohif/extension-dicom-pdf": ["./extensions/dicom-pdf/src"],
+      "@ohif/mode-basic": ["./modes/basic/src"],
+      "@ohif/mode-longitudinal": ["./modes/longitudinal/src"],
+      "@vcr/extension-vet-pacs": ["./extensions/vet-pacs/src"],
+      "@vcr/mode-vet-reading": ["./modes/vet-reading/src"],
       "@state": ["./platform/app/src/state"]
     }
   },

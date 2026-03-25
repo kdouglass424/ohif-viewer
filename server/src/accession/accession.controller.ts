@@ -13,6 +13,11 @@ export class AccessionController {
     return this.accessionService.create(dto);
   }
 
+  @Get('by-accession-number/:accessionNumber')
+  findByAccessionNumber(@Param('accessionNumber') accessionNumber: string) {
+    return this.accessionService.findByAccessionNumber(accessionNumber);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.accessionService.findOne(id);

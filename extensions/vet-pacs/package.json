@@ -1,0 +1,35 @@
+{
+  "name": "@vcr/extension-vet-pacs",
+  "version": "1.0.0",
+  "description": "Veterinary PACS extension for OHIF Viewer",
+  "author": "VCR",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "dist/vcr-extension-vet-pacs.umd.js",
+  "module": "src/index.ts",
+  "keywords": [
+    "ohif-extension"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --config .webpack/webpack.dev.js --watch --output-pathinfo",
+    "build": "cross-env NODE_ENV=production webpack --config .webpack/webpack.prod.js",
+    "build:package": "yarn run build"
+  },
+  "peerDependencies": {
+    "@ohif/core": "3.13.0-beta.43",
+    "@ohif/ui-next": "3.13.0-beta.43",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router-dom": "6.28.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.28.2"
+  },
+  "devDependencies": {
+    "webpack": "5.105.0",
+    "webpack-merge": "5.10.0"
+  }
+}

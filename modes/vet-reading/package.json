@@ -1,0 +1,43 @@
+{
+  "name": "@vcr/mode-vet-reading",
+  "version": "1.0.0",
+  "description": "Veterinary reading workflow mode for OHIF Viewer",
+  "author": "VCR",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "dist/vcr-mode-vet-reading.js",
+  "module": "src/index.ts",
+  "keywords": [
+    "ohif-mode"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack --config .webpack/webpack.dev.js --watch --output-pathinfo",
+    "build": "cross-env NODE_ENV=production webpack --config .webpack/webpack.prod.js",
+    "build:package": "yarn run build"
+  },
+  "peerDependencies": {
+    "@ohif/core": "3.13.0-beta.43",
+    "@ohif/extension-cornerstone": "3.13.0-beta.43",
+    "@ohif/extension-cornerstone-dicom-rt": "3.13.0-beta.43",
+    "@ohif/extension-cornerstone-dicom-seg": "3.13.0-beta.43",
+    "@ohif/extension-cornerstone-dicom-sr": "3.13.0-beta.43",
+    "@ohif/extension-default": "3.13.0-beta.43",
+    "@ohif/extension-dicom-pdf": "3.13.0-beta.43",
+    "@ohif/extension-dicom-video": "3.13.0-beta.43",
+    "@ohif/extension-measurement-tracking": "3.13.0-beta.43",
+    "@ohif/mode-basic": "3.13.0-beta.43",
+    "@ohif/mode-longitudinal": "3.13.0-beta.43",
+    "@vcr/extension-vet-pacs": "1.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "7.28.2",
+    "i18next": "17.3.1"
+  },
+  "devDependencies": {
+    "webpack": "5.105.0",
+    "webpack-merge": "5.10.0"
+  }
+}
