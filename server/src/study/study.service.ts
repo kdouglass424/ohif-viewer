@@ -35,13 +35,25 @@ export class StudyService {
     if (existing) {
       return existing;
     }
-    const study = this.studyRepo.create({
-      studyInstanceUid,
-      ...defaults,
-    });
-    const saved = await this.studyRepo.save(study);
-    this.studyListChanged$.next();
-    return saved;
+    try {
+      const study = this.studyRepo.create({
+        studyInstanceUid,
+        ...defaults,
+      });
+      const saved = await this.studyRepo.save(study);
+      this.studyListChanged$.next();
+      return saved;
+    } catch (err) {
+      // Handle race condition: concurrent inserts for the same studyInstanceUid
+      // will hit the UNIQUE constraint — return the existing record instead
+      if (err?.code === '23505') {
+        const race = await this.studyRepo.findOneBy({ studyInstanceUid });
+        if (race) {
+          return race;
+        }
+      }
+      throw err;
+    }
   }
 
   async findOne(id: string): Promise<Study> {
