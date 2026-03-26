@@ -32,8 +32,6 @@ make docker/up
 
 Navigate to `http://localhost:8042` to access the Orthanc UI directly. Click **Upload** in the sidebar to drag-and-drop DICOM files.
 
-You can also upload via the nginx proxy at `http://localhost:3001/pacs/`.
-
 ## Stopping
 
 ```bash

@@ -82,10 +82,11 @@ function VetPatientPanel() {
         throw new Error(`HTTP ${res.status}`);
       }
       setStudy(await res.json());
+      navigate('/pending-studies');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update status');
     }
-  }, [study]);
+  }, [study, navigate]);
 
   if (!studyInstanceUid) {
     return (

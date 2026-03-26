@@ -32,27 +32,9 @@ export class InitialSchema1711234567890 implements MigrationInterface {
       )
     `);
 
-    await queryRunner.query(`
-      CREATE TABLE "dicom_instances" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "orthancId" text NOT NULL,
-        "sopInstanceUid" text,
-        "seriesInstanceUid" text,
-        "studyInstanceUid" text,
-        "sopClassUid" text,
-        "s3Key" text,
-        "modality" text,
-        "patientId" text,
-        "patientName" text,
-        "receivedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_dicom_instances_id" PRIMARY KEY ("id"),
-        CONSTRAINT "UQ_dicom_instances_orthancId" UNIQUE ("orthancId")
-      )
-    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE IF EXISTS "dicom_instances"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "studies"`);
     await queryRunner.query(`DROP TYPE IF EXISTS "studies_status_enum"`);
     await queryRunner.query(`DROP EXTENSION IF EXISTS "uuid-ossp"`);

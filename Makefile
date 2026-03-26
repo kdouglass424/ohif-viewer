@@ -32,7 +32,7 @@ yarn/init:
 ## Start OHIF dev server with local Orthanc config
 .PHONY: run/dev
 run/dev:
-	APP_CONFIG=config/local_orthanc.js OHIF_OPEN_URL=http://localhost:3001/worklist yarn dev
+	APP_CONFIG=config/local_orthanc.js OHIF_OPEN_URL=http://localhost:3001/pending-studies yarn dev
 
 ## Start the backend dev server
 .PHONY: run/server

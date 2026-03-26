@@ -6,7 +6,9 @@ import { Logger } from '@nestjs/common';
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   logger.log(`Config: ${JSON.stringify(config, null, 2)}`);
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['debug', 'log', 'warn', 'error', 'verbose'],
+  });
   app.setGlobalPrefix('api');
   await app.listen(config.PORT);
 }

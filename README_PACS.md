@@ -50,8 +50,6 @@
 
 6. Open `http://localhost:3001/worklist` in your browser.
 
-7. Utilize the [workflow.http](./server/test/workflow.http) along with [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) to send sample payloads to the PACS API server.
-
 ## Uploading DICOM images
 
 Refer to the [Orthanc README](./platform/app/.recipes/Nginx-Orthanc-Postgres/README.md) to upload DICOM images to the PACS.
