@@ -11,7 +11,6 @@ export const CreateDicomInstanceSchema = z.object({
   modality: z.string().optional(),
   patientId: z.string().optional(),
   patientName: z.string().optional(),
-  accessionNumber: z.string().optional(),
 });
 
 export class CreateDicomInstanceDto extends createZodDto(CreateDicomInstanceSchema) {}

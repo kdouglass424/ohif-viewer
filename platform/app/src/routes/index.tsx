@@ -8,7 +8,7 @@ import WorkList from './WorkList';
 import Local from './Local';
 import Debug from './Debug';
 import NotFound from './NotFound';
-import PrioritizedWorklist from './PrioritizedWorklist/PrioritizedWorklist';
+import PendingStudies from './PendingStudies/PendingStudies';
 import buildModeRoutes from './buildModeRoutes';
 import PrivateRoute from './PrivateRoute';
 import PropTypes from 'prop-types';
@@ -89,8 +89,8 @@ const bakedInRoutes = [
     children: Local.bind(null, { modePath: 'viewer/dicomlocal' }),
   },
   {
-    path: `/worklist`,
-    children: PrioritizedWorklist,
+    path: `/pending-studies`,
+    children: PendingStudies,
   },
 ];
 
@@ -122,8 +122,6 @@ const createRoutes = ({
     routerBasename.length > 1 && routerBasename.endsWith('/')
       ? routerBasename.substring(0, routerBasename.length - 1)
       : routerBasename;
-
-  console.log('Registering worklist route', routerBasename, path);
 
   const WorkListRoute = {
     path: '/',

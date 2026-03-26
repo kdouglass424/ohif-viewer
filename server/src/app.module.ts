@@ -6,7 +6,7 @@ import { ZodValidationPipe, ZodSerializerInterceptor } from 'nestjs-zod';
 import { databaseConfig } from '../database/database.config';
 import { config } from './config';
 import { StatusModule } from './status/status.module';
-import { AccessionModule } from './accession/accession.module';
+import { StudyModule } from './study/study.module';
 import { DicomInstanceModule } from './dicom-instance/dicom-instance.module';
 
 @Module({
@@ -19,7 +19,7 @@ import { DicomInstanceModule } from './dicom-instance/dicom-instance.module';
       },
     }),
     StatusModule,
-    AccessionModule,
+    StudyModule,
     DicomInstanceModule,
   ],
   providers: [

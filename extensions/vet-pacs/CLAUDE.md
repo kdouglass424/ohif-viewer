@@ -6,29 +6,38 @@ This project extends the OHIF Viewer to build a veterinary PACS. All vet-specifi
 
 | Package | Location | Purpose |
 |---------|----------|---------|
-| `@vcr/extension-vet-pacs` | `extensions/vet-pacs/` | Vet patient panel, commands for accession status |
+| `@vcr/extension-vet-pacs` | `extensions/vet-pacs/` | Vet patient panel, commands for study status |
 | `@vcr/mode-vet-reading` | `modes/vet-reading/` | Reading workflow — extends longitudinal mode, adds vet panel to viewer |
-| `@vcr/server` | `server/` | NestJS backend — accessions, worklist API, Orthanc webhooks |
+| `@vcr/server` | `server/` | NestJS backend — studies, study list API, Orthanc webhooks |
 
 ## Architecture
 
 ```
-PrioritizedWorklist ──→ /reading/orthanc?AccessionNumber=xxx
-                              │
-                    ┌─────────┴──────────────┐
-                    │  vet-reading mode      │
-                    │ (extends longitudinal) |
-                    ├────────────────────────┤
-                    │ Left panels:           │
-                    │   - Thumbnail list     │  (from measurement-tracking)
-                    │   - Vet Patient panel  │  (from vet-pacs extension)
-                    │ Center:                │
-                    │   - Tracked viewport   │  (from measurement-tracking)
-                    │ Right panels:          │
-                    │   - Segmentation       │  (from cornerstone)
-                    │   - Measurements       │  (from measurement-tracking)
-                    └────────────────────────┘
+PendingStudies ──→ /reading/orthanc?StudyInstanceUIDs=xxx
+                          │
+                ┌─────────┴──────────────┐
+                │  vet-reading mode      │
+                │ (extends longitudinal) |
+                ├────────────────────────┤
+                │ Left panels:           │
+                │   - Thumbnail list     │  (from measurement-tracking)
+                │   - Vet Patient panel  │  (from vet-pacs extension)
+                │ Center:                │
+                │   - Tracked viewport   │  (from measurement-tracking)
+                │ Right panels:          │
+                │   - Segmentation       │  (from cornerstone)
+                │   - Measurements       │  (from measurement-tracking)
+                └────────────────────────┘
 ```
+
+## Study Workflow
+
+1. DICOM uploaded to Orthanc → BullMQ job → study record auto-created (status: `pending`)
+2. Hospital doctor views study on PendingStudies screen (`/pending-studies`)
+3. Doctor reviews images in viewer, then either:
+   - **Mark as Reviewed** → status: `reviewed` (no VCR consultation needed)
+   - **Submit to VCR** → status: `submitted` (requests VCR radiology consultation)
+4. Both are terminal states that remove the study from the pending queue
 
 ## Plugin Registration
 
@@ -46,19 +55,19 @@ The NestJS server runs alongside Orthanc and provides:
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/worklist` | GET | List accessions (paginated, filterable by status) |
-| `/api/worklist/events` | GET (SSE) | Real-time worklist updates |
-| `/api/accessions` | POST | Create accession |
-| `/api/accessions/:id` | GET | Get accession by UUID |
-| `/api/accessions/by-accession-number/:accessionNumber` | GET | Get accession by accession number (used by VetPatientPanel) |
-| `/api/accessions/:id/status` | PATCH | Update accession status (`pending` → `in_progress` → `done`) |
+| `/api/studies` | GET | List studies (paginated, filterable by status; default: pending) |
+| `/api/studies/events` | GET (SSE) | Real-time study list updates |
+| `/api/studies` | POST | Create study |
+| `/api/studies/:id` | GET | Get study by UUID |
+| `/api/studies/by-study-instance-uid/:uid` | GET | Get study by StudyInstanceUID (used by VetPatientPanel) |
+| `/api/studies/:id/status` | PATCH | Update study status (`pending` → `reviewed` or `submitted`) |
 
-## Accession Entity Fields
+## Study Entity Fields
 
-- **DICOM**: `accessionNumber`, `studyInstanceUid`
+- **DICOM**: `studyInstanceUid` (unique, required)
 - **Patient**: `patientId`, `patientName`, `patientSex`, `patientDob`, `patientWeight`, `species`, `breed`
 - **Owner**: `clientName`, `clientId`
-- **Workflow**: `status` (pending/in_progress/done), `submittedAt`
+- **Workflow**: `status` (pending/reviewed/submitted), `receivedAt`
 
 ## Upstream Mergeability
 
@@ -70,11 +79,11 @@ OHIF-maintained files we touch (keep minimal):
 | `platform/app/package.json` | Added `@vcr/*` dependencies |
 | `tsconfig.json` | Added `@vcr/*` and `@ohif/mode-*` path aliases |
 
-Everything else (`extensions/vet-pacs/`, `modes/vet-reading/`, `server/`, `PrioritizedWorklist`) is our code — no merge conflicts with upstream.
+Everything else (`extensions/vet-pacs/`, `modes/vet-reading/`, `server/`, `PendingStudies`) is our code — no merge conflicts with upstream.
 
 ## Adding New Pages
 
-Custom routes are added in `platform/app/src/routes/index.tsx` in the `bakedInRoutes` array. See `PrioritizedWorklist` for the pattern:
+Custom routes are added in `platform/app/src/routes/index.tsx` in the `bakedInRoutes` array. See `PendingStudies` for the pattern:
 1. Create component in `platform/app/src/routes/YourPage/`
 2. Import and add to `bakedInRoutes` with a path
 3. Use `@ohif/ui-next` components for consistent styling

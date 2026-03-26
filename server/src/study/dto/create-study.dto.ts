@@ -1,9 +1,8 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
-export const CreateAccessionSchema = z.object({
-  accessionNumber: z.string(),
-  studyInstanceUid: z.string().optional(),
+export const CreateStudySchema = z.object({
+  studyInstanceUid: z.string(),
   patientId: z.string().optional(),
   patientName: z.string().optional(),
   patientSex: z.string().optional(),
@@ -15,4 +14,4 @@ export const CreateAccessionSchema = z.object({
   clientId: z.string().optional(),
 });
 
-export class CreateAccessionDto extends createZodDto(CreateAccessionSchema) {}
+export class CreateStudyDto extends createZodDto(CreateStudySchema) {}

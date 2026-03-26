@@ -1,21 +1,21 @@
 function getCommandsModule({ commandsManager }) {
   const actions = {
-    updateAccessionStatus: async ({ accessionId, status }) => {
-      const res = await fetch(`/api/accessions/${accessionId}/status`, {
+    updateStudyStatus: async ({ studyId, status }) => {
+      const res = await fetch(`/api/studies/${studyId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
       });
       if (!res.ok) {
-        throw new Error(`Failed to update accession status: HTTP ${res.status}`);
+        throw new Error(`Failed to update study status: HTTP ${res.status}`);
       }
       return res.json();
     },
   };
 
   const definitions = {
-    updateAccessionStatus: {
-      commandFn: actions.updateAccessionStatus,
+    updateStudyStatus: {
+      commandFn: actions.updateStudyStatus,
     },
   };
 

@@ -7,16 +7,15 @@ export class InitialSchema1711234567890 implements MigrationInterface {
     await queryRunner.query(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`);
 
     await queryRunner.query(
-      `CREATE TYPE "accessions_status_enum" AS ENUM('pending', 'in_progress', 'done')`,
+      `CREATE TYPE "studies_status_enum" AS ENUM('pending', 'reviewed', 'submitted')`,
     );
 
     await queryRunner.query(`
-      CREATE TABLE "accessions" (
+      CREATE TABLE "studies" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "accessionNumber" text NOT NULL,
-        "status" "accessions_status_enum" NOT NULL DEFAULT 'pending',
-        "submittedAt" TIMESTAMP WITH TIME ZONE NOT NULL,
-        "studyInstanceUid" text,
+        "studyInstanceUid" text NOT NULL,
+        "status" "studies_status_enum" NOT NULL DEFAULT 'pending',
+        "receivedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "patientId" text,
         "patientName" text,
         "patientSex" text,
@@ -28,8 +27,8 @@ export class InitialSchema1711234567890 implements MigrationInterface {
         "clientId" text,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_accessions_id" PRIMARY KEY ("id"),
-        CONSTRAINT "UQ_accessions_accessionNumber" UNIQUE ("accessionNumber")
+        CONSTRAINT "PK_studies_id" PRIMARY KEY ("id"),
+        CONSTRAINT "UQ_studies_studyInstanceUid" UNIQUE ("studyInstanceUid")
       )
     `);
 
@@ -45,7 +44,6 @@ export class InitialSchema1711234567890 implements MigrationInterface {
         "modality" text,
         "patientId" text,
         "patientName" text,
-        "accessionNumber" text,
         "receivedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
         CONSTRAINT "PK_dicom_instances_id" PRIMARY KEY ("id"),
         CONSTRAINT "UQ_dicom_instances_orthancId" UNIQUE ("orthancId")
@@ -55,8 +53,8 @@ export class InitialSchema1711234567890 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE IF EXISTS "dicom_instances"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "accessions"`);
-    await queryRunner.query(`DROP TYPE IF EXISTS "accessions_status_enum"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "studies"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "studies_status_enum"`);
     await queryRunner.query(`DROP EXTENSION IF EXISTS "uuid-ossp"`);
   }
 }

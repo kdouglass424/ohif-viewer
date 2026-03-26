@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button, Label, Separator, Textarea } from '@ohif/ui-next';
 
-interface AccessionData {
+interface StudyData {
   id: string;
-  accessionNumber: string;
-  status: 'pending' | 'in_progress' | 'done';
+  studyInstanceUid: string;
+  status: 'pending' | 'reviewed' | 'submitted';
   patientName: string | null;
   patientId: string | null;
   patientSex: string | null;
@@ -15,19 +15,19 @@ interface AccessionData {
   breed: string | null;
   clientName: string | null;
   clientId: string | null;
-  submittedAt: string;
+  receivedAt: string;
 }
 
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-yellow-900/50 text-yellow-200',
-  in_progress: 'bg-primary/20 text-primary',
-  done: 'bg-green-900/50 text-green-200',
+  reviewed: 'bg-green-900/50 text-green-200',
+  submitted: 'bg-primary/20 text-primary',
 };
 
 const STATUS_LABELS: Record<string, string> = {
   pending: 'Pending',
-  in_progress: 'In Progress',
-  done: 'Done',
+  reviewed: 'Reviewed',
+  submitted: 'Submitted',
 };
 
 function InfoRow({ label, value }: { label: string; value: string | null | undefined }) {
@@ -42,55 +42,55 @@ function InfoRow({ label, value }: { label: string; value: string | null | undef
 function VetPatientPanel() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const accessionNumber = searchParams.get('AccessionNumber');
-  const [accession, setAccession] = useState<AccessionData | null>(null);
+  const studyInstanceUid = searchParams.get('StudyInstanceUIDs');
+  const [study, setStudy] = useState<StudyData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reportText, setReportText] = useState('');
 
-  const fetchAccession = useCallback(async (accNum: string) => {
+  const fetchStudy = useCallback(async (uid: string) => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/accessions/by-accession-number/${encodeURIComponent(accNum)}`);
+      const res = await fetch(`/api/studies/by-study-instance-uid/${encodeURIComponent(uid)}`);
       if (!res.ok) {
-        throw new Error(res.status === 404 ? 'Accession not found' : `HTTP ${res.status}`);
+        throw new Error(res.status === 404 ? 'Study not found' : `HTTP ${res.status}`);
       }
-      setAccession(await res.json());
+      setStudy(await res.json());
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch accession');
+      setError(err instanceof Error ? err.message : 'Failed to fetch study');
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (accessionNumber) {
-      fetchAccession(accessionNumber);
+    if (studyInstanceUid) {
+      fetchStudy(studyInstanceUid);
     }
-  }, [accessionNumber, fetchAccession]);
+  }, [studyInstanceUid, fetchStudy]);
 
-  const handleMarkComplete = useCallback(async () => {
-    if (!accession) return;
+  const handleUpdateStatus = useCallback(async (newStatus: 'reviewed' | 'submitted') => {
+    if (!study) return;
     try {
-      const res = await fetch(`/api/accessions/${accession.id}/status`, {
+      const res = await fetch(`/api/studies/${study.id}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'done' }),
+        body: JSON.stringify({ status: newStatus }),
       });
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
       }
-      setAccession(await res.json());
+      setStudy(await res.json());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update status');
     }
-  }, [accession]);
+  }, [study]);
 
-  if (!accessionNumber) {
+  if (!studyInstanceUid) {
     return (
       <div className="text-muted-foreground flex items-center justify-center p-4 text-sm">
-        No accession number in URL
+        No study selected
       </div>
     );
   }
@@ -111,7 +111,7 @@ function VetPatientPanel() {
           variant="outline"
           size="sm"
           className="mt-2"
-          onClick={() => fetchAccession(accessionNumber)}
+          onClick={() => fetchStudy(studyInstanceUid)}
         >
           Retry
         </Button>
@@ -119,7 +119,7 @@ function VetPatientPanel() {
     );
   }
 
-  if (!accession) return null;
+  if (!study) return null;
 
   return (
     <div className="flex flex-col gap-2 p-3">
@@ -128,43 +128,42 @@ function VetPatientPanel() {
         variant="ghost"
         size="sm"
         className="text-muted-foreground hover:text-foreground -ml-1 mb-1 self-start"
-        onClick={() => navigate('/worklist')}
+        onClick={() => navigate('/pending-studies')}
       >
-        &larr; Back to Worklist
+        &larr; Back to Study List
       </Button>
 
       {/* Status */}
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium">Accession</span>
+        <span className="text-sm font-medium">Study</span>
         <span
           className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${
-            STATUS_STYLES[accession.status] ?? ''
+            STATUS_STYLES[study.status] ?? ''
           }`}
         >
-          {STATUS_LABELS[accession.status] ?? accession.status}
+          {STATUS_LABELS[study.status] ?? study.status}
         </span>
       </div>
-      <span className="text-muted-foreground font-mono text-xs">{accession.accessionNumber}</span>
 
       <Separator />
 
       {/* Patient */}
       <span className="text-xs font-medium uppercase tracking-wider">Patient</span>
-      <InfoRow label="Name" value={accession.patientName} />
-      <InfoRow label="Species" value={accession.species} />
-      <InfoRow label="Breed" value={accession.breed} />
-      <InfoRow label="Sex" value={accession.patientSex} />
+      <InfoRow label="Name" value={study.patientName} />
+      <InfoRow label="Species" value={study.species} />
+      <InfoRow label="Breed" value={study.breed} />
+      <InfoRow label="Sex" value={study.patientSex} />
       <InfoRow
         label="Weight"
-        value={accession.patientWeight != null ? `${accession.patientWeight} kg` : null}
+        value={study.patientWeight != null ? `${study.patientWeight} kg` : null}
       />
 
       <Separator />
 
       {/* Client / Owner */}
       <span className="text-xs font-medium uppercase tracking-wider">Owner</span>
-      <InfoRow label="Name" value={accession.clientName} />
-      <InfoRow label="ID" value={accession.clientId} />
+      <InfoRow label="Name" value={study.clientName} />
+      <InfoRow label="ID" value={study.clientId} />
 
       <Separator />
 
@@ -172,7 +171,7 @@ function VetPatientPanel() {
       <span className="text-xs font-medium uppercase tracking-wider">Report</span>
       <Textarea
         className="min-h-[200px]"
-        placeholder="Enter reading report..."
+        placeholder="Notes for Vets Choice Radiology"
         value={reportText}
         onChange={e => setReportText(e.target.value)}
       />
@@ -180,15 +179,24 @@ function VetPatientPanel() {
       <Separator />
 
       {/* Actions */}
-      {accession.status === 'in_progress' && (
-        <Button
-          variant="default"
-          size="sm"
-          className="mt-1 bg-green-700 hover:bg-green-600"
-          onClick={handleMarkComplete}
-        >
-          Mark Complete
-        </Button>
+      {study.status === 'pending' && (
+        <div className="mt-1 flex flex-col gap-2">
+          <Button
+            variant="default"
+            size="sm"
+            className="bg-green-700 hover:bg-green-600"
+            onClick={() => handleUpdateStatus('reviewed')}
+          >
+            Mark as Reviewed
+          </Button>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => handleUpdateStatus('submitted')}
+          >
+            Submit to VCR
+          </Button>
+        </div>
       )}
     </div>
   );

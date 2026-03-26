@@ -6,28 +6,25 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-export enum AccessionStatus {
+export enum StudyStatus {
   PENDING = 'pending',
-  IN_PROGRESS = 'in_progress',
-  DONE = 'done',
+  REVIEWED = 'reviewed',
+  SUBMITTED = 'submitted',
 }
 
-@Entity('accessions')
-export class Accession {
+@Entity('studies')
+export class Study {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true })
-  accessionNumber: string;
-
-  @Column({ type: 'enum', enum: AccessionStatus, default: AccessionStatus.PENDING })
-  status: AccessionStatus;
-
-  @Column({ type: 'timestamptz' })
-  submittedAt: Date;
-
-  @Column({ nullable: true })
   studyInstanceUid: string;
+
+  @Column({ type: 'enum', enum: StudyStatus, default: StudyStatus.PENDING })
+  status: StudyStatus;
+
+  @Column({ type: 'timestamptz', default: () => 'now()' })
+  receivedAt: Date;
 
   // Veterinary patient fields
   @Column({ nullable: true })
